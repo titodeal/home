@@ -1,0 +1,400 @@
+#!/bin/bash
+export PS4='$LINENO + '
+
+usage ()
+{
+    cat << EOF
+NAME
+    mdpkg - a tool which is a wrap for dpkg-query tool
+SYNOPSIS
+    mdpkg [-a=][-f=][-h][-i|-ni][-s=][-t=][-u=] [package pattern...]
+OPTIONS
+    -a, --align=[%[-]n[.n]s]
+        Examples:
+        %-15s - to left side, min length 15 characters.
+        %15s - to right side, min length 15 characters.
+        %15.10s - to right side, cuts column to 10 characters.
+
+    -f=, --fields=[p|s|t]
+        p - Package names
+        s - Installed size
+        t - Timestamp. Format can be adjustment.
+        a - Abbreviature
+        v - Version
+        u - Status
+        d - Description
+
+    -h, --help
+        Show this massage
+
+    -i, --installed
+
+    -ni, --not-installed
+
+    -s, --sort
+        --sort=p:sr:t
+        Sorts output by fields.
+        If lines have uniq value, fields sets by priority. 
+        r means reverse specific field.
+        
+
+    -t, --time-format [common date format]
+        %D – Display date as mm/dd/yy
+        %Y – Year (e.g., 2020)
+        %m – Month (01-12)
+        %B – Long month name (e.g., November)
+        %b – Short month name (e.g., Nov)
+        %d – Day of month (e.g., 01)
+        %j – Day of year (001-366)
+        %u – Day of week (1-7)
+        %A – Full weekday name (e.g., Friday)
+        %a – Short weekday name (e.g., Fri)
+        %H – Hour (00-23)
+        %I – Hour (01-12)
+        %M – Minute (00-59)
+        %S – Second (00-60)
+
+    -u, --unit-size=[unit]
+        K - Kilobyte
+        M - Megabyte
+        G - Gigabyte
+        
+EOF
+}
+
+# Defaults value
+SED="sed "
+DPKG_FORMAT="\${Package}"
+ALIGN_FORMAT="%-25s"
+TIME_FORMAT="%Y\/%m\/%d-%R"
+UNIT_SIZE="1M"
+FILTER=""
+SORT="sort --key 1"
+
+
+# Extract all options.
+OPTIONS=$(echo $* | sed -E '
+        s/(^|\s)(--?\S+(\b|\B))/<<\2>>/g;
+        /<</!d;
+        s/(<<\S+>>).*/\1/;
+        s/>><</ /g;
+        s/<<|>>//g'
+    )
+
+# Extract all package arguments.
+PKGS_PATTERN=$(echo $* | sed -E '
+        s/(^|\s)(\w\S+(\b|\B))/<<\2>>/g;
+        /<</!d;
+        s/[ \.0-9A-Za-z!@#$%^&*()/\+=-]*(<<\S+>>).*/\1/;
+        s/>><</ /g;
+        s/<<|>>//g
+        '
+    )
+OPTIONS=$(echo $OPTIONS | sed 's/ /\n/g' | sort -r | sed 's/\n/ /g')
+
+check_options ()
+{
+    err=0
+    avail=$(cat <<- EOF
+        (-a=)|(--align=)|
+        (-f=)|(--format=)|
+        (-h)|(--help)|
+        (-i)|(--installed)|
+        (-ni)|(--not-installed)|
+        (-s=)|(--sort=)|
+        (-t=)|(--time-format=)|
+        (-u=)|(--unit-size=)
+EOF
+    )
+    avail=$(echo $avail | sed 's/\s//g')
+
+    #avail="(-f=)|(--format=)| (-a=)|(--align=)| (-h)|(--help)"
+
+    unknown="Warning:Unknown options: "
+    for opt in $OPTIONS; do
+        if [[ ! $opt =~ $avail ]]; then
+            err=1
+            unknown+="'$opt' "
+        fi
+    done
+    if (( $err )); then 
+        usage | head
+        echo "$unknown" >&2
+        exit 1
+    fi
+}
+
+
+sed_process ()
+{
+    #if [[ -z $SED ]]; then SED="sed "; fi
+
+    local sep=$1
+    local com=$2
+
+    cond="$sep\w\+:"
+    fld_command="-e '
+        s/$sep:/<none:$sep>/;
+        h;
+        s/$sep\w\+:/$sep/;
+        x;
+        s/.*$sep\(\w\+\):.*/$comm/;
+        /<none:$sep>/!e
+    ' "
+    fld_normalize="-e '
+        /<none:$sep>/!
+        s/^/ttt:/;
+        /<none:$sep>/!
+        s/$/:/;
+        /<none:$sep>/!
+        H;
+        /<none:$sep>/!
+        x;
+        /<none:$sep>/!
+        s/\(.*\)$sep\(.*\)ttt:\(.\+\):/\1\"\3\"\2/;
+        /<none:$sep>/!
+        s/\n//;
+        s/<none:$sep>/none/;
+    ' " 
+
+    SED+=$fld_command
+    SED+=$fld_normalize
+}
+
+fields_process ()
+{
+    fields=$(echo $1 | sed -e 's/\(.\)/\1 /g')
+    if [[ -z $fields ]]; then 
+        echo "Warning: '--fields' has no value." >&2
+        exit 1
+    fi
+
+    local format="" 
+
+    for f in $fields; do
+        case $f in 
+            p) # Package {Package} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                format+="\"\${Package}\""
+                ;;
+
+            s) # Size {Installed-Size} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                local sep="sss:"
+                local comm="numfmt 
+                    --from-unit=1Ki
+                    --to-unit=1$UNIT_SIZE
+                    --format='%5.3f$UNIT_SIZE' \1
+                    "
+                format+="$sep\${Installed-Size}:"
+                sed_process $sep $comm
+                ;;
+
+            t) # Timestamp  {db-fsys:Last-Modified} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                local sep="ddd:"
+                local comm="date -d @\1 +$TIME_FORMAT"
+                format+="$sep\${db-fsys:Last-Modified}:"
+                sed_process $sep $comm
+                ;;
+
+            d) # Descrition {binary:Summary} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                format+="\"\${binary:Summary}\""
+                ;;
+
+            u) # Status {db:Satus-Status} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                format+="\${db:Status-Status}"
+                ;;
+
+            v) # Version {Version} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                format+="\"\${Version}\""
+                ;;
+
+            a) # Abbrev {db:Status-Abbrev} field
+                if [[ -n $format ]]; then format+=" \t "; fi
+                format+="\"\${db:Status-Abbrev}\""
+                ;;
+
+            *) # Unknown fields
+                echo "Field '$f' are not valid" >&2
+                exit 1
+                ;;
+        esac
+    done
+    DPKG_FORMAT=$format
+}
+
+get_unitsize_command (){
+    comm="numfmt 
+        --from-unit=1Ki
+        --to-unit=1$UNIT_SIZE
+        --format='%5.3f$UNIT_SIZE' \1
+    "
+}
+                
+
+check_options
+
+for opt in $OPTIONS; do
+    
+    case $opt in
+
+        -f=*|--fields=*) 
+            value=$(echo $opt | cut -d'=' -f 2)
+            fields_process $value
+            ;;
+
+        -a=*|--align=*)
+            value=$(echo $opt | cut -d'=' -f 2)
+            alexp="^%-?[0-9]{1,2}(\.[0-9]{1,6})?s$"
+            if [[ ! $value =~ $alexp ]]; then
+                echo "Warning: --align' '$opt' has wrong formats" >&2
+                continue
+            fi
+            ALIGN_FORMAT=$value
+            ;;
+
+        -t=*|--time-format=*) 
+            value=$(echo $opt | cut -d'=' -f 2)
+            if [[ -z $value ]]; then
+                    echo "Warning: '--time-fromat' has no value" >&2;
+                continue
+                fi
+            TIME_FORMAT=$(echo $value | sed 's/\//\\\//g')
+            ;;
+
+        -h|--help)
+            usage
+            exit
+            ;;
+
+        -i | --instatlled) 
+            FILTER="d"
+            ;;
+
+        -ni | --not-instatlled) 
+            FILTER="!d"
+            ;;
+        
+        -s=* | --sort=*)
+            value=$(echo $opt | cut -d'=' -f 2)
+            if [[ -z $value ]]; then
+                    echo "Warning: '--sort' has no value" >&2;
+                continue
+                fi
+            if [[ ! $value =~ ^([pst]r?:){0,2}[pst]r?:?$ ]]; then
+                    echo "Warning: '--sort' has wrong format" >&2;
+                continue
+
+            fi
+
+            declare -A flds
+            flds["p"]=1
+            flds["s"]=2n
+            flds["t"]=3n
+
+            value=$( echo $value | sed 's/:/ /g')
+            sort_cmd="sort "
+            for f in $value; do
+
+                lt=$( echo $f | sed 's/r//')
+                col=${flds[$lt]}
+
+                rev=$( echo $f | sed -n '/r/c r')
+                sort_cmd+="--key $col$rev "
+            done
+            SORT=$sort_cmd
+            unset flds
+            ;;
+
+
+        -u=*|--unit-size=*) 
+            value=$(echo $opt | cut -d'=' -f 2)
+            if [[ -z $value ]]; then
+                    echo "Warning: '--unit-size' has no value" >&2;
+                continue
+                fi
+            UNIT_SIZE=$value
+            ;;
+
+
+        *) # Unknown option 
+            echo "Wrong option '$opt'" >&2
+            exit 1
+            ;;
+    esac
+done    
+
+servicefields="
+    \${Package}\t
+    \${Installed-Size}\t
+    \${db-fsys:Last-Modified}\t
+    \${db:Status-Status}\t
+"
+
+cut_service="cut -f 5-"
+
+filter_cmd=""
+if [[ ! -z $FILTER ]]; then
+    filter_cmd=" | sed '/not-installed/$FILTER'"
+fi
+
+DPKG_FORMAT="$servicefields""$DPKG_FORMAT"
+SED+=" -e 's/.*/printf \"$ALIGN_FORMAT\" &/;e' -e 's/^\s*//'"
+DPKG="dpkg-query --show --showformat='$DPKG_FORMAT\n' $PKGS_PATTERN"
+DPKG+=$filter_cmd
+DPKG+=" | ""$SORT"
+DPKG+=" | ""$cut_service"
+if [[ ! $SED == "sed " ]]; then
+   DPKG+=" | ""$SED"
+fi
+
+
+
+DPKG_TOTAL_SIZE="dpkg-query --show --showformat='$DPKG_FORMAT\n' $PKGS_PATTERN"
+DPKG_TOTAL_SIZE+="$filter_cmd | cut -f 2"
+SED_TSIZE="sed -n -e 
+    '
+    s/^\s\+// ; 
+    s/\s\+$// ; 
+    s/^$/0/ ; 
+    /^[0-9]\+$/s/.*/&+/;
+    H;
+    \$!d;
+    x;
+    s/\n//g;
+    s/+$//g;
+    s/.*/echo & | bc/;
+    e'
+
+    -e
+    'p'
+"
+
+DPKG_TOTAL_SIZE+=" | $SED_TSIZE"
+totalsize=$(eval $DPKG_TOTAL_SIZE)
+unitsize_cmd="numfmt 
+    --from-unit=1Ki
+    --to-unit=1$UNIT_SIZE
+    --format='%5.3f$UNIT_SIZE' $totalsize 
+"
+totalunitsize="---TOTALSIZE--\n"$(eval $unitsize_cmd)
+#echo $DPKG_TOTAL_SIZE
+
+#DPKG+=" | less -S -X"
+
+DPKG=$(eval $DPKG)
+echo -e "$DPKG\n$totalunitsize"  | less -S -X
+
+#echo "IM HERE"
+#eval $DPKG
+#echo $totalunitsize
+#echo $PKGS_PATTERN
+# echo $DPKG
+# echo $SED
+
+
+

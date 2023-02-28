@@ -1,0 +1,22 @@
+$include ~/.inputrc.d/readline-vim
+
+set editing-mode vi
+
+set convert-meta on
+
+set show-mode-in-prompt on
+set vi-cmd-mode-string "\1\e[2 q\2"
+set vi-ins-mode-string "\1\e[5 q\2"
+
+set keymap vi-command
+"\C-r": 	"\x00" 
+"v":		"\x00" 
+"\C-x\C-r":	re-read-init-file
+"\C-,C-l":	clear-screen
+",ls":		"ils -al\x0d"
+
+set keymap vi-insert
+"\C-r":		"\x00" 
+"\C-x\C-r":	re-read-init-file
+"\C-,C-l":	clear-screen
+"\"":		'\C-v\"\C-v\"\x1bi'
