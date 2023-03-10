@@ -119,10 +119,11 @@ fi
 # ------------ CUSTOM -----------------
 stty -ixon
 
+# remove all /mnt/c windows paths
+PATH=$(echo $PATH | sed 's/\(:\/mnt\/c[^:]*\)//g')
+
 # Readline initialization file
 INPUTRC="~/.inputrc.d/inputrc"
-
-PATH=~/bin:$PATH
 
 # Prompt 
 PS1="\
@@ -136,7 +137,7 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # Wirtualenvwrapper setup
-source virtualenvwrapper.sh
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME="$HOME/.local/share/virtualenvs"
 export PROJECT_HOME="$HOME/Development"
+source "$HOME/.local/bin/virtualenvwrapper.sh"
