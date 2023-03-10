@@ -134,3 +134,9 @@ PS1="\
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# Wirtualenvwrapper setup
+source virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export WORKON_HOME="$HOME/.local/share/virtualenvs"
+export PROJECT_HOME="$HOME/Development"
