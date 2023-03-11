@@ -18,6 +18,25 @@ nnoremap <C-L> <C-W>l
 nnoremap <leader>q :q<CR>
 nnoremap !<leader>q :q!<CR>
 
+# --- Maximize window size function
+noremap <silent><expr> <C-Space> ExpandWindow()
+inoremap <silent><expr> <C-Space> ExpandWindow()
+
+var expanded = 1
+def ExpandWindow(): string
+    var maximize: string
+    var minimize: string
+    if mode() == 'i'
+        maximize = "\<C-R>=execute" .. '("normal \<C-W>|\<C-W>_")' .. "\<CR>"
+        minimize = "\<C-R>=execute" .. '("normal \<C-W>=")' .. "\<CR>"
+    else
+        maximize = "\<C-W>\|\<C-W>_"
+        minimize = "\<C-W>="
+    endif
+    expanded = 1 - expanded
+    return expanded ? minimize : maximize
+enddef
+
 # Split and move terminal
 nnoremap <leader><S-W> :vertical term <CR>
 tnoremap <C-J> <C-W>j 

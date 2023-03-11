@@ -7,7 +7,6 @@ vim9script
 # go to $VIMRUNTIME/autoload/netrw.vim to line 6594 'nmap <buffer> <unique> <c-h> <Plug>NetrwHideEdit'
 # 1. Change <c-h> to free key sequence.
 # 2. Remove <unique> and redefine it in your vim config.
-nmap <buffer> <leader><c-h> <Plug>NetrwHideEdit
 
 # size in percent
 g:netrw_winsize = 35
@@ -19,6 +18,9 @@ g:netrw_liststyle = 3
 g:netrw_browse_split = 4
 # hide .gitignore files
 g:netrw_list_hide = '*.swp$,__pycache__'
+# adjust preview window due 'p' key
+g:netrw_preview = 0 # horizontal
+g:netrw_alto = 0 # bottom
 
 
 augroup netrw_custom_group
@@ -35,10 +37,11 @@ def NetrwMapping()
     nnoremap <buffer> <C-J> <C-W>j
     nnoremap <buffer> <C-K> <C-W>k
     nnoremap <buffer> <C-L> <C-W>l
-#    nnoremap <buffer><silent><nowait> <S-CR> <Plug>NetrwTreeSqueeze
-#    nnoremap <buffer><silent><nowait><unique> <leader><C-H> <Plug>NetrwHideEdit
+    # Fixed functionality as described at the strart of the document.
+    nmap <buffer> <leader><C-H> <Plug>NetrwHideEdit
 enddef
 
-nnoremap <leader><C-K> :Lexplore<CR>
+nnoremap <silent> <Space> :Lexplore<CR> 
+nnoremap <silent> <leader><Space> :exec ('Lexplore' ..  fnamemodify(expand('%'),':p:h'))<CR>
 
 echom "module: NetrwBrowser"
