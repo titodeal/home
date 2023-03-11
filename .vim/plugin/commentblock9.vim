@@ -1,7 +1,7 @@
 vim9script
 
 
-#unlet g:loaded_commentblock
+unlet g:loaded_commentblock
 if exists("g:loaded_commentblock")
     finish
 endif
@@ -136,11 +136,11 @@ def FindMultiLineBlock(_l: number, _op_blk: string, _cl_blk: string, direction: 
 		var mop = match(line, op_blk)
 		var mcl = match(line, cl_blk)
 
-		if mcl != -1
+		if mop != -1 
+			expect_line = l
 			stop = 1
 
-		elseif mop != -1 
-			expect_line = l
+                elseif mcl != -1
 			stop = 1
 
 		elseif l == endline

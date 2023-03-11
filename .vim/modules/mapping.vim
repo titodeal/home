@@ -19,8 +19,8 @@ nnoremap <leader>q :q<CR>
 nnoremap !<leader>q :q!<CR>
 
 # --- Maximize window size function
-noremap <silent><expr> <C-Space> ExpandWindow()
-inoremap <silent><expr> <C-Space> ExpandWindow()
+noremap <silent><expr> <A-Space> ExpandWindow()
+inoremap <silent><expr> <A-Space> ExpandWindow()
 
 var expanded = 1
 def ExpandWindow(): string
@@ -46,7 +46,7 @@ tnoremap <C-L> <C-W>l
 tnoremap <leader>q <C-W>N:q!<CR>
 
 # Saving
-nnoremap <C-s> :write<CR>
+nnoremap <silent> <C-S> :write<CR>
 # Highlight search on/off
 nnoremap <F3> :set hlsearch!<CR>
 
