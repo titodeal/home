@@ -42,6 +42,38 @@
             "command": 
             {
                 "action": "sendInput",
+                "input": "\u001b[27;5;115~"
+            },
+            "keys": "ctrl+s"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[27;5;98~"
+            },
+            "keys": "ctrl+b"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[27;5;32~"
+            },
+            "keys": "ctrl+space"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[27;3;32~"
+            },
+            "keys": "alt+space"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
                 "input": "\u001b[27;3;104~"
             },
             "keys": "alt+h"

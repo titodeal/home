@@ -1,7 +1,6 @@
 vim9script
 
 
-unlet g:loaded_commentblock
 if exists("g:loaded_commentblock")
     finish
 endif

@@ -143,7 +143,7 @@ function ExecuteFile()
 		return 0
 	endif
 
-	let currfile = expand('%:p')
+	let currfile = "'" .. expand('%:p') .. "'"
 
 	let execfile_cmd = b:engine ." ". currfile
 

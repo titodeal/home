@@ -141,3 +141,9 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME="$HOME/.local/share/virtualenvs"
 export PROJECT_HOME="$HOME/Development"
 source "$HOME/.local/bin/virtualenvwrapper.sh"
+
+# Git Prompt setup
+source ~/home/git-prompt.sh
+export GIT_PS1_SHOWDIRTYSTATE=1
+GIT_PROMPT='$(__git_ps1 "(%s)")'
+PS1=$(echo $PS1 | sed 's/>/'"$GIT_PROMPT"'>/')

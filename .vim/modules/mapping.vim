@@ -21,6 +21,7 @@ nnoremap !<leader>q :q!<CR>
 # --- Maximize window size function
 noremap <silent><expr> <A-Space> ExpandWindow()
 inoremap <silent><expr> <A-Space> ExpandWindow()
+tnoremap <silent><expr> <A-Space> ExpandWindow()
 
 var expanded = 1
 def ExpandWindow(): string
