@@ -66,6 +66,14 @@
             "command": 
             {
                 "action": "sendInput",
+                "input": "\u001b[27;5;44~"
+            },
+            "keys": "ctrl+,"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
                 "input": "\u001b[27;3;32~"
             },
             "keys": "alt+space"
