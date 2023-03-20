@@ -129,7 +129,7 @@ INPUTRC="~/.inputrc.d/inputrc"
 PS1="\
 \[\e]12;rgb:7a/b0/c8\a\]\
 \[\e[38;5;117m\]\u:\
-\[\e[38;5;178m\]\w\[\e[38;5;141m\]>\[\e[0m\] "
+\[\e[38;5;178m\]\w\[\e[38;5;141m\]> \[\e[0m\] "
 
 # Pyenv setup
 export PYENV_ROOT="$HOME/.pyenv"
@@ -154,7 +154,7 @@ virtualenv(){
     if [[ -n "$VIRTUAL_ENV" ]]; then
         venv="${VIRTUAL_ENV##*/}"
         venv=$(echo ${venv} | sed 's/-\w\+$//')
-        venv=\|$venv-
+        venv=\($venv\)
     else
         venv=$(pwd | sed "s/${HOME//\//\\\/}/\~/")
     fi
