@@ -48,6 +48,7 @@ tnoremap <leader>q <C-W>N:q!<CR>
 
 # Saving
 nnoremap <silent> <C-S> :write<CR>
+inoremap <silent><C-S> <Cmd>call execute("write")<CR>
 # Highlight search on/off
 nnoremap <F3> :set hlsearch!<CR>
 

@@ -145,5 +145,19 @@ source "$HOME/.local/bin/virtualenvwrapper.sh"
 # Git Prompt setup
 source ~/home/git-prompt.sh
 export GIT_PS1_SHOWDIRTYSTATE=1
-GIT_PROMPT='$(__git_ps1 "(%s)")'
+GIT_PROMPT='$(__git_ps1 "|%s-")'
 PS1=$(echo $PS1 | sed 's/>/'"$GIT_PROMPT"'>/')
+
+# Venv Propmt setup
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+virtualenv(){
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        venv="${VIRTUAL_ENV##*/}"
+        venv=$(echo ${venv} | sed 's/-\w\+$//')
+        venv=\|$venv-
+    else
+        venv=$(pwd | sed "s/${HOME//\//\\\/}/\~/")
+    fi
+    echo "$venv"
+}
+PS1=$(echo $PS1 | sed 's/\\w/$(virtualenv)/')
