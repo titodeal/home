@@ -123,7 +123,7 @@ stty -ixon
 PATH=$(echo $PATH | sed 's/\(:\/mnt\/c[^:]*\)//g')
 
 # Readline initialization file
-INPUTRC="~/.inputrc.d/inputrc"
+export INPUTRC="~/.inputrc.d/inputrc"
 
 # Prompt 
 PS1="\
@@ -136,9 +136,10 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
+VENVS_HOME="$HOME/.virtualenvs"
 # Wirtualenvwrapper setup
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-export WORKON_HOME="$HOME/.local/share/virtualenvs"
+export WORKON_HOME=$VENVS_HOME
 export PROJECT_HOME="$HOME/Development"
 source "$HOME/.local/bin/virtualenvwrapper.sh"
 
@@ -150,14 +151,14 @@ PS1=$(echo $PS1 | sed 's/>/'"$GIT_PROMPT"'>/')
 
 # Venv Propmt setup
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-virtualenv(){
+virtualenvprompt(){
     if [[ -n "$VIRTUAL_ENV" ]]; then
         venv="${VIRTUAL_ENV##*/}"
-        venv=$(echo ${venv} | sed 's/-\w\+$//')
+        venv=$(echo ${venv} | sed -E 's/-\w+(-py[0-9].*)?$//')
         venv=\($venv\)
     else
         venv=$(pwd | sed "s/${HOME//\//\\\/}/\~/")
     fi
     echo "$venv"
 }
-PS1=$(echo $PS1 | sed 's/\\w/$(virtualenv)/')
+PS1=$(echo $PS1 | sed 's/\\w/$(virtualenvprompt)/')
