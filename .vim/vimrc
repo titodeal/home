@@ -29,9 +29,11 @@ set mouse=a
 set ttymouse=sgr
 # Avoid comment line while 'O' or <Enter>.
 # Exclude 'o' and 'r' flag'.
-set formatoptions=cql
+set formatoptions=cqlto
 # completion
 set completeopt=menuone,longest
+# Set clipboard behavior
+set clipboard=unnamedplus,autoselectplus,exclude:cons\|linux
 
 augroup aoutosourcing
 	autocmd! 

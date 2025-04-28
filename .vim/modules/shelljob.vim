@@ -7,6 +7,7 @@ augroup autoengine
 	autocmd! 
 	autocmd FileType python let b:engine = "python3"
 	autocmd FileType sh let b:engine = "bash"
+	autocmd FileType bash let b:engine = "bash"
 augroup END
 
 let g:shell = "/bin/bash"

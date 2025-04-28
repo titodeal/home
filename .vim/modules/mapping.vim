@@ -51,11 +51,8 @@ nnoremap <silent> <C-S> :write<CR>
 inoremap <silent><C-S> <Cmd>call execute("write")<CR>
 # Highlight search on/off
 nnoremap <F3> :set hlsearch!<CR>
-
 # Dot completion
-inoremap <expr> . empty(&omnifunc) ? '.' : ".\<C-X>\<C-O>"
-
-# Insert mode Undo record
+inoremap <expr> . empty(&omnifunc) ? '.' : ".\<C-X>\<C-O>" # Insert mode Undo record
 #inoremap <Space> <C-G>u<Space>
 inoremap <CR> <C-G>u<CR>
 
@@ -67,4 +64,6 @@ inoremap <A-k> <Up>
 inoremap <C-A-j> <C-g><Down>
 inoremap <C-A-k> <C-g><Up>
 
+# open tag file in preveiw window
+# noremap <leader>] :exe "ptag " .. expand("<cword>")<CR>
 echom "module: Mapping"

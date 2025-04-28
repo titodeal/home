@@ -21,6 +21,9 @@ g:netrw_list_hide = '*.swp$,__pycache__'
 # adjust preview window due 'p' key
 g:netrw_preview = 0 # horizontal
 g:netrw_alto = 0 # bottom
+# if 0 the current dir will be chanched to netrw dir. If 1 it can be done by
+# cd keys
+g:netrw_keepdir = 1
 
 
 augroup netrw_custom_group
@@ -39,6 +42,7 @@ def NetrwMapping()
     nnoremap <buffer> <C-L> <C-W>l
     # Fixed functionality as described at the strart of the document.
     nmap <buffer> <leader><C-H> <Plug>NetrwHideEdit
+    nmap <buffer> <leader><C-L> <Plug>NetrwRefresh
 enddef
 
 nnoremap <silent> <Space> :Lexplore<CR> 
