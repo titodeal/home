@@ -65,5 +65,5 @@ inoremap <C-A-j> <C-g><Down>
 inoremap <C-A-k> <C-g><Up>
 
 # open tag file in preveiw window
-# noremap <leader>] :exe "ptag " .. expand("<cword>")<CR>
+noremap <leader>] :exe "ptag " .. expand("<cword>")<CR>
 echom "module: Mapping"

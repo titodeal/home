@@ -13,27 +13,26 @@ def Lint()
 
     bufnr = bufnr('%')
 
-    util_title = '-- Flake8 --'
-    flist_data = [{'bufnr': bufnr, 'text': util_title}]
+    util_title = "-- Flake8:"
+    flist_data = [{'text': ""}, {'bufnr': bufnr, 'text': util_title}]
     setlocal makeprg=flake8
     exec 'make! %'
     flist_data += getqflist()
 
-    util_title = '-- Ruff --'
-    flist_data += [{'bufnr': bufnr, 'text': util_title}]
+    util_title = "-- Ruff:"
+    flist_data += [{'text': ""}, {'bufnr': bufnr, 'text': util_title}]
     setlocal makeprg=ruff\ check\ --output-format\ concise
     exec 'make! %'
     flist_data += getqflist()
 
-    util_title = '-- Mypy --'
-    flist_data += [{'bufnr': bufnr, 'text': util_title}]
-    setlocal makeprg=mypy\ --show-column-numbers\ --strict\ --ignore-missing-imports
+    util_title = "-- Mypy:"
+    flist_data += [{'text': ""}, {'bufnr': bufnr, 'text': util_title}]
+    setlocal makeprg=mypy\ --show-column-numbers\ --strict
     exec 'make! %'
     flist_data += getqflist()
 
     setqflist(flist_data)
     exec 'copen' 
     feedkeys('<CR>')
-
 
 enddef
