@@ -1,7 +1,7 @@
-require("config.lazy")
-
 vim.g.mapleader = ","
 vim.g.maplocalleader = "\\"
+
+require("config.lazy")
 
 vim.cmd("set termguicolors")
 vim.cmd("colorscheme substrata")

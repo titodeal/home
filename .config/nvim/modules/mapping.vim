@@ -38,11 +38,13 @@ endfunction
 
 " Split and move terminal
 nnoremap <leader><S-W> :vertical term <CR>
-tnoremap <C-J> <C-W>j 
-tnoremap <C-K> <C-W>k
-tnoremap <C-H> <C-W>h
-tnoremap <C-L> <C-W>l
-tnoremap <leader>q <C-W>N:q!<CR>
+tnoremap <C-J> <C-\><C-N><C-w>j
+tnoremap <C-K> <C-\><C-N><C-w>k
+tnoremap <C-H> <C-\><C-N><C-w>h
+tnoremap <C-L> <C-\><C-N><C-w>l
+tnoremap <leader>q <C-\><C-N>:q!<CR>
+tnoremap <C-[><C-[> <C-\><C-N>
+
 
 " Saving
 nnoremap <silent> <C-S> :write<CR>
