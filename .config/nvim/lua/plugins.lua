@@ -44,7 +44,7 @@ return {
           local cmd = ''
 
           if file_type == 'python' then
-            cmd = 'python3 ' .. vim.fn.shellescape(file_path)
+            cmd = 'python ' .. vim.fn.shellescape(file_path)
           elseif file_type == 'sh' or file_type == 'bash' then
             cmd = 'bash ' .. vim.fn.shellescape(file_path)
           -- Додайте інші типи файлів за потреби

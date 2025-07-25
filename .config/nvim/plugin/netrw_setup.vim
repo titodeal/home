@@ -44,6 +44,6 @@ function! NetrwMapping()
 endfunction
 
 nnoremap <silent> <Space> :Lexplore<CR> 
-nnoremap <silent> <leader><Space> :exec ('Lexplore' ..  fnamemodify(expand('%'),':p:h'))<CR>
+nnoremap <silent> <leader><Space> :exec ('Lexplore ' ..  fnamemodify(expand('%'),':p:h'))<CR>
 
 echom "module: NetrwBrowser"
