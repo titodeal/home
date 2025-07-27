@@ -1,15 +1,5 @@
-return {
---------- Commetray ---------------
-    {
-        "tpope/vim-commentary",
-        lazy = false,
-        config = function()
-          vim.keymap.set('n', '<C-_>', '<Plug>Commentary', { silent = true, desc = "Comment/uncomment with operator" })
-          vim.keymap.set('n', '<C-_><C-_>', '<Plug>CommentaryLine', { silent = true, desc = "Toggle comment on current line" })
-        end,
-    },
---------- Terminal Job ---------------
-    {
+---@type LazyPluginSpec[]
+return{
         'akinsho/toggleterm.nvim',
         version = "*",
         config = function()
@@ -118,5 +108,4 @@ return {
         -- Мапінг для вашої команди RunFile
         vim.keymap.set('n', '<leader><C-B>', ':RunFile<CR>', { silent = true, desc = "Run current file" })
         end
-    }
 }
