@@ -1,3 +1,6 @@
+
+vim.opt.completeopt = 'menu,menuone,noselect'
+
 return {
   {
     'hrsh7th/nvim-cmp',
@@ -24,7 +27,7 @@ return {
           end,
         },
         mapping = cmp.mapping.preset.insert({
-            ["<Tab>"] = cmp.mapping(function(fallback)
+            ["<C-N>"] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item()
                 elseif luasnip.expand_or_jumpable() then
@@ -33,7 +36,7 @@ return {
                     fallback()
                 end
             end, { "i", "s" }),
-            ["<S-Tab>"] = cmp.mapping(function(fallback)
+            ["<C-P>"] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_prev_item()
                 elseif luasnip.jumpable(-1) then
@@ -43,6 +46,7 @@ return {
                 end
             end, { "i", "s" }),
 
+            ['<C-L>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Підтвердження вибору, з автоматичним вибором першого варіанта
             ['<C-Space>'] = cmp.mapping.complete(), -- Виклик автодоповнення 
         }),
@@ -70,9 +74,18 @@ return {
         }
       })
 
+      ---- Command Line -----
+      vim.keymap.set("c", "<C-L>", function()
+          cmp.abort()
+      end, { silent = true })
+
       -- 💻 Командний режим (`:`)
       cmp.setup.cmdline(":", {
-        mapping = cmp.mapping.preset.cmdline(),
+          mapping = {
+            ["<C-N>"] = cmp.mapping(cmp.mapping.select_next_item(), { "c" }),
+            ["<C-P>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "c" }),
+            ["<CR>"] = cmp.mapping.confirm({ select = true })
+          },
         sources = cmp.config.sources(
           { { name = "path" } },
           {
