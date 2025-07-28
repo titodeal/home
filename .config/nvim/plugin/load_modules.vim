@@ -9,6 +9,6 @@
 "so ~/.vim/modules/completion.vim
 execute 'source ' . stdpath('config') . '/modules/mapping.vim'
 execute 'source ' . stdpath('config') . '/modules/statusline.vim'
+execute 'source ' . stdpath('config') . '/modules/bracket_pairs.vim'
+execute 'source ' . stdpath('config') . '/modules/bracket_wrapping.vim'
 " execute 'source ' . stdpath('config') . '/modules/shelljob.vim'
-
-
