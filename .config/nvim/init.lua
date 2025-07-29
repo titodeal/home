@@ -2,8 +2,6 @@ vim.g.mapleader = ","
 vim.g.maplocalleader = "\\"
 
 require("config.lazy")
--- require("lsp_settings")
-require("lsp_hover")
 
 vim.cmd("set termguicolors")
 vim.cmd("colorscheme substrata")
