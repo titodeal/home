@@ -53,9 +53,9 @@ inoremap <silent><C-S> <Cmd>call execute("write")<CR>
 nnoremap <F3> :set hlsearch!<CR>
 
 " Dot completion
-inoremap <expr> . empty(&omnifunc) ? '.' : ".\<C-X>\<C-O>" 
+" inoremap <expr> . empty(&omnifunc) ? '.' : ".\<C-X>\<C-O>" 
 " Reject popup menu
-inoremap <C-L> <C-X><C-Z>
+" inoremap <C-L> <C-X><C-Z>
 " Insert mode Undo record
 "inoremap <Space> <C-G>u<Space>
 inoremap <CR> <C-G>u<CR>

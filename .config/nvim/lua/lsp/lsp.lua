@@ -1,3 +1,5 @@
+local hover_window = require('lsp.hover_window')
+
 return {
     {
         'neovim/nvim-lspconfig',
@@ -16,8 +18,12 @@ return {
                     -- autoImportCompletions = false,
                   }
                }
-            }
+            },
+            on_attach = function(client, bufnr)
+               hover_window.setup_hover_handler(bufnr) 
+            end
         })
+
         lspconfig.ruff.setup({
           capabilities = capabilities,
           settings = {
@@ -36,6 +42,7 @@ return {
               -- targetVersion = "py310",
           }
         })
+
         vim.diagnostic.config({
           virtual_text = { severity = { min = vim.diagnostic.severity.HINT } },
           signs = true,
@@ -46,7 +53,7 @@ return {
 
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = "[G]o to [D]efinition" })
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = "[G]o to [R]eferences" })
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = "Hover Documentation" })
+        -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = "Hover Documentation" })
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { desc = "[R]e[n]ame Symbol" })
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { desc = "[C]ode [A]ction" })
         vim.keymap.set('n', '<leader>f', function()
@@ -55,6 +62,6 @@ return {
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic" })
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
         vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Open diagnostic float" })
-        end,
-    },
+     end,
+  },
 }
