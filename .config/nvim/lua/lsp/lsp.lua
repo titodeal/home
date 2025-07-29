@@ -24,24 +24,25 @@ return {
             end
         })
 
-        lspconfig.ruff.setup({
-          capabilities = capabilities,
-          settings = {
-              logLevel = "info", -- або "debug", "error", "warning"
-              organizeImports = true,
-              lint = {
-                  select = { "E", "F", "B", "I", "UP" },
-                  ignore = { "E501", "B006" },
-                  fixable = { "ALL" },
-              },
-              format = {
-                  quoteStyle = "double",
-                  indentStyle = "space",
-              },
-              lineLength = 120,
-              -- targetVersion = "py310",
-          }
-        })
+        lspconfig.ruff.setup {
+            init_options = {
+                settings = {
+                    lint = {
+                        enable = true,
+                        preview = true,
+                        select = { "E", "F", "UP", "B", "SIM", "I" },
+                        extendSelect = {"W"},
+                        ignore = {},
+                    },
+                    format = {
+                        enable = true,
+                        preview = true,
+                    },
+                    lineLength = 120,
+                    fixAll = true,
+                }
+            }
+        }
 
         vim.diagnostic.config({
           virtual_text = { severity = { min = vim.diagnostic.severity.HINT } },
