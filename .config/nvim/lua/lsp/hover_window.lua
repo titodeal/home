@@ -121,7 +121,7 @@ function M.setup_hover_handler(bufnr)
         -- ця перевірка може спрацювати.
         vim.schedule(function()
             if not found_hover_content then
-                print("No hover content found from any LSP client after all attempts.")
+                -- print("No hover content found from any LSP client after all attempts.")
                 open_documentation_window({"No documentation available."}, bufnr)
             end
         end)

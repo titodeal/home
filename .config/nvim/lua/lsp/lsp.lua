@@ -24,9 +24,12 @@ return {
             end
         })
 
-        lspconfig.ruff.setup {
+        lspconfig.ruff.setup ({
             init_options = {
                 settings = {
+                    -- args = { "--preview" },
+                    -- logLevel = "info",
+                    -- logFile = "ruff_lsp.log",
                     lint = {
                         enable = true,
                         preview = true,
@@ -41,8 +44,12 @@ return {
                     lineLength = 120,
                     fixAll = true,
                 }
-            }
-        }
+            },
+            on_attach = function(client, bufnr)
+                -- Disable hover in favor of Pyright
+                client.server_capabilities.hoverProvider = false
+            end
+        })
 
         vim.diagnostic.config({
           virtual_text = { severity = { min = vim.diagnostic.severity.HINT } },
