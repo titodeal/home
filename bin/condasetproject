@@ -1,0 +1,23 @@
+#!/bin/bash 
+
+function setproject() {
+    if [[ -n $CONDA_PREFIX && "$(basename "$CONDA_PREFIX")" != "miniconda3" && "$(basename "$CONDA_PREFIX")" != "base" ]]; then
+ 
+        local env_name=$(basename "$CONDA_PREFIX")
+        local target_dir=$(pwd)
+        local hook_dir="$CONDA_PREFIX/etc/conda/activate.d"
+        local hook_file="$hook_dir/setproject.sh"
+
+        mkdir -p "$hook_dir"
+
+        echo "#!/bin/bash" > "$hook_file"
+        echo "cd \"$target_dir\"" >> "$hook_file"
+
+        chmod +x "$hook_file"
+        echo "✅ Hook створено: при активації '$env_name' буде перехід у '$target_dir'"
+    else
+        echo "⚠️ Щоб зафіксувати папку проекту потрібно бути в активованому середеовищі."
+    fi
+}
+
+setproject
